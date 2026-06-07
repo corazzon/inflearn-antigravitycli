@@ -1,0 +1,47 @@
+# 파이썬 바이트코드 및 캐시 파일
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 가상환경
+.venv/
+venv/
+ENV/
+env/
+
+# 운영체제 생성 파일 (macOS / Windows)
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE 및 에디터 설정
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# 테스트 및 커버리지 결과
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# 주피터 노트북 체크포인트
+.ipynb_checkpoints
+
+# 프로젝트 수집 데이터 및 생성된 대용량 보고서/이미지 파일
+yes24/data/
+yes24/docs/*.pptx
+yes24/docs/*.pdf
+yes24/docs/v2_slides_png/
+
+# 에이전트 캐시 및 설정 폴더
+.agents/
+.antigravitycli/
