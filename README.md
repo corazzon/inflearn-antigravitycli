@@ -1,26 +1,34 @@
-# 📚 도서 베스트셀러 데이터 수집 및 분석 대시보드 프로젝트
+# 📚 국내 도서 베스트셀러 분석 & 시각화 통합 리포지토리
 
-본 리포지토리는 교보문고 컴퓨터/IT 카테고리의 일간 베스트셀러 도서 데이터를 동적으로 수집하여 탐색적 데이터 분석(EDA)을 수행하고, 이를 한눈에 볼 수 있는 인터랙티브 웹 대시보드를 구축해 배포하는 프로젝트입니다.
+본 프로젝트는 국내 양대 온라인 서점인 **YES24**와 **교보문고**의 도서 데이터를 수집하고, 탐색적 데이터 분석(EDA)을 거쳐 엑셀/PPT 자동 생성 및 모던 웹앱 대시보드로 시각화하는 통합 데이터 공학 프로젝트입니다.
 
 ---
 
-## 🚀 실시간 웹 대시보드 서비스
+## 🌐 교보문고 실시간 웹 대시보드 서비스
 
-인터넷이 연결된 환경이라면 어디서든 아래 링크를 통해 실시간으로 분석된 교보문고 베스트셀러 통계와 상세 도서 목록을 인터랙티브하게 탐색할 수 있습니다.
+교보문고 컴퓨터/IT 일간 베스트셀러(1위~449위) 전체 데이터와 도서 소개글을 시각적으로 탐색할 수 있는 인터랙티브 웹 대시보드가 배포되어 있습니다.
 
-- **교보문고 대시보드 링크**: [https://corazzon.github.io/inflearn-antigravitycli/src/index.html](https://corazzon.github.io/inflearn-antigravitycli/src/index.html)
+- **교보문고 대시보드 접속 주소**: [https://corazzon.github.io/inflearn-antigravitycli/src/index.html](https://corazzon.github.io/inflearn-antigravitycli/src/index.html)
 
 ### 💻 대시보드 주요 기능
-* **Bento Grid 레이아웃**: 핵심 지표 요약(KPI) 카드와 차트 영역이 바둑판 배열로 정돈되어 있어 가독성이 뛰어납니다.
-* **5가지 인터랙티브 차트 (Chart.js)**:
-  1. *정가 및 판매가 분포* (Bar 차트)
-  2. *출판사 시장 점유율 Top 10* (Doughnut 차트)
-  3. *도서 만족도 분포* (Polar Area 차트)
-  4. *상세설명 핵심 키워드 중요도* (TF-IDF Horizontal Bar 차트)
-  5. *평점 대비 리뷰 수 상관관계* (Scatter 차트)
-* **실시간 반응형 테이블**: 도서명, 저자, 출판사를 타이핑하는 즉시 필터링되며, 정렬 기능을 통해 순위나 가격, 평점 등으로 도서 목록을 재배치할 수 있습니다.
-* **라이트 & 다크 모드**: 우측 상단 토글 버튼을 통해 다크 모드(유리효과 적용)와 라이트 모드 간 실시간 테마 전환이 가능합니다.
-* **상세정보 팝업 모달**: 테이블의 도서를 클릭하면 책의 상세 설명 본문(`inbukCntt`)을 깔끔한 모달창으로 읽을 수 있습니다.
+* **실시간 테마 스위치**: 라이트(Nordic Light) / 다크(Glassmorphism Sleek Dark) 모드 실시간 토글 지원
+* **5가지 Chart.js 인터랙티브 그래프**: 가격 분포, 출판사 점유율, 평점 분포, TF-IDF 핵심 키워드, 평점-리뷰 산점도 시각화
+* **실시간 검색 및 다중 정렬**: 검색어 입력 시 즉각 필터링되는 테이블 및 순위/가격/평점 정렬 지원
+* **상세 설명 팝업**: 도서 선택 시 상세 소개글을 읽을 수 있는 부드러운 모달 창 연동
+
+---
+
+## 🛠️ 서점별 주요 모듈 및 기능 요약
+
+### 1. 교보문고 (KyoboBooks)
+- **API 탐색 및 스펙화**: Playwright 브라우저 네트워크 감지를 통해 게이트웨이 보안 키(`x-api-gw-key`)를 캡처하여 명세로 수립하였습니다.
+- **동적 스크래핑**: 수집 한계점(449위)까지 페이지를 루프로 돌며 정가, 판매가, 평점, 리뷰수, 책 소개글(`inbukCntt`)을 순차적으로 안전하게 크롤링합니다.
+- **EDA & 텍스트 분석**: 11개의 분석 그래프를 생성하고, 상세설명 본문에서 KoNLPy 없이 Scikit-learn의 `TfidfVectorizer`를 활용해 핵심 키워드 30개를 도출하였습니다.
+
+### 2. YES24
+- **베스트셀러 크롤러**: YES24의 비동기 베스트셀러 목록 API를 활용한 소설/시 분야 도서 데이터 적재 파이프라인.
+- **EDA & PPT 보고서 생성**: 데이터 분석 결과를 기반으로 python-pptx를 활용하여 트렌디한 **Neo-Brutalism 디자인 스타일**의 파워포인트 슬라이드 쇼를 자동 조립 및 빌드합니다.
+- **엑셀 대시보드 연동**: 수집된 통계를 요약하여 보기 좋은 형태의 엑셀 대시보드 포맷으로 내보냅니다.
 
 ---
 
@@ -28,55 +36,56 @@
 
 ```bash
 workspace/
-  ├── .github/workflows/
-  │     └── static.yml                # GitHub Pages 자동 배포 CI/CD 워크플로우
-  ├── kyobobooks/
-  │     ├── data/
-  │     │     └── kyobo_bestseller.csv # 수집된 일간 베스트셀러 데이터 (총 449건)
-  │     ├── docs/
-  │     │     ├── scaraping_prompt.md  # 스크래핑 설계 명세서
-  │     │     ├── task.md              # 프로젝트 관리 태스크 대장
-  │     │     ├── walkthrough.md       # 수집 완료 보고서
-  │     │     └── EDA_Report.md        # 데이터 EDA 종합 리포트 (3,000자 이상)
-  │     ├── images/
-  │     │     └── *.png                # 11개의 EDA 시각화 그래프 이미지 파일
-  │     └── src/
-  │           ├── inspect_api.py       # Playwright 기반 API 게이트웨이 키 탐색기
-  │           ├── scraping.py          # 일간 베스트셀러 동적 크롤링 스크래퍼
-  │           ├── eda.py               # 시각화 및 TF-IDF 키워드 도출 분석기
-  │           ├── dashboard_data_builder.py # 대시보드 주입용 데이터 프리프로세서
-  │           ├── dashboard_data.js    # 변환된 대시보드 바인딩 데이터셋
-  │           ├── dashboard.html       # 대시보드 뷰 HTML 소스코드
-  │           └── index.html           # 대시보드 기본 진입점
-  └── yes24/
-        └── ...                        # YES24 관련 기존 작업 폴더
+  ├── .github/workflows/          # GitHub Pages 자동 배포 CI/CD 워크플로우
+  ├── kyobobooks/                 # [교보문고 모듈]
+  │     ├── data/                 # 수집 완료된 CSV 원시 데이터셋 (449건)
+  │     ├── docs/                 # 작업 계획서, 태스크 대장, EDA 종합 보고서
+  │     ├── images/               # 11개의 EDA 분석 그래프 이미지 (.png)
+  │     └── src/                  # API 수집기, 분석기, 대시보드 HTML/JS/Builder 소스코드
+  ├── yes24/                      # [YES24 모듈]
+  │     ├── data/                 # YES24 스크래핑 데이터 적재 폴더
+  │     ├── docs/                 # YES24 작업 내역 및 관련 문서
+  │     ├── images/               # YES24 시각화 결과물 이미지 폴더
+  │     └── src/                  # PPT 자동 조립기, Excel 대시보드 빌더, 크롤러 소스코드
+  └── README.md                   # 통합 리포지토리 메인 설명문
 ```
 
 ---
 
 ## ⚙️ 실행 및 로컬 개발 가이드
 
-프로젝트는 패키지 관리 및 가상환경 관리 도구인 `uv`를 사용합니다.
+본 리포지토리는 패키지 및 가상환경 관리 도구인 `uv`를 사용하며, 루트 폴더의 공통 `.venv` 가상환경을 공유하여 동작합니다.
 
-### 1. 의존성 패키지 설치
+### 1. 라이브러리 환경 설정
 ```bash
-uv pip install playwright nest-asyncio pandas openpyxl scikit-learn seaborn matplotlib koreanize-matplotlib
+uv pip install playwright nest-asyncio pandas openpyxl scikit-learn seaborn matplotlib python-pptx koreanize-matplotlib
 uv run playwright install chromium
 ```
 
-### 2. 스크래핑 및 분석 파이프라인 가동
+### 2. 교보문고 모듈 구동 순서
 ```bash
-# 1단계: API 게이트웨이 보안 키(x-api-gw-key) 구조 파악
+# 1. API 보안 토큰 자동 캡처
 uv run python kyobobooks/src/inspect_api.py
 
-# 2단계: 끝페이지(449위)까지 안전하게 도서 상세 정보 수집
+# 2. 전체 페이지 베스트셀러 데이터 크롤링
 uv run python kyobobooks/src/scraping.py
 
-# 3단계: 탐색적 데이터 분석(EDA) 및 11개 차트 이미지 생성
+# 3. EDA 리포트 및 시각화 이미지 11개 추출
 uv run python kyobobooks/src/eda.py
 
-# 4단계: 수집된 데이터를 대시보드용 전역 자바스크립트로 빌드
+# 4. 웹앱 대시보드용 데이터 전처리 및 JS 빌드
 uv run python kyobobooks/src/dashboard_data_builder.py
 ```
 
-빌드가 정상 완료되면 `kyobobooks/src/dashboard.html` 또는 `kyobobooks/src/index.html` 파일을 크롬 브라우저 등에서 더블 클릭하여 즉시 실행하고 분석 보고서를 모니터링할 수 있습니다.
+### 3. YES24 모듈 구동 순서
+```bash
+# 1. YES24 베스트셀러 데이터 수집
+uv run python yes24/src/scraping.py
+
+# 2. 데이터 분석 및 기술통계 산출
+uv run python yes24/src/eda.py
+
+# 3. 엑셀 대시보드 및 PPT 슬라이드 보고서 자동 생성
+uv run python yes24/src/create_excel_dashboard.py
+uv run python yes24/src/generate_ppt_neobrutalism_v2.py
+```
