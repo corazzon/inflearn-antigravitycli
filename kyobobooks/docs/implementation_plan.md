@@ -1,13 +1,14 @@
-# 교보문고 베스트셀러 데이터 수집 구현 계획
+# 교보문고 베스트셀러 웹앱 대시보드 구현 계획
 
-교보문고의 컴퓨터/IT 분야 일간 베스트셀러 페이지의 도서 데이터(순위, 도서명, 저자, 출판사, 출판일, 가격, 평점 등)를 수집하는 파이프라인을 구축합니다. 교보문고는 동적 웹페이지 형식이므로, 먼저 브라우저 네트워크 로그를 캡처하는 탐색 스크립트를 사용하여 백엔드 API 엔드포인트 정보를 확보한 후, 안전하고 빠른 API 기반 스크래퍼를 구현합니다.
+수집된 교보문고 컴퓨터/IT 분야 일간 베스트셀러 데이터(총 449건)를 브라우저에서 직관적으로 탐색할 수 있는 반응형 웹 대시보드를 구축합니다.
 
 ## User Review Required
 
 > [!NOTE]
-> - **수집 대상 URL**: `https://store.kyobobook.co.kr/bestseller/online/daily/domestic/33?page=1` (전체 페이지)
-> - **1단계 (네트워크 탐색)**: Playwright를 사용해 타겟 페이지를 띄우고, 백엔드 API 호출 목록을 인터셉트하여 URL 및 필요한 Request 헤더(Headers) 정보를 추출해 `kyobobooks/docs/scaraping_prompt.md` 파일에 기록합니다.
-> - **2단계 (API 기반 수집 및 저장)**: 수집한 API 명세를 바탕으로 파이썬 `requests` 모듈과 필요시 `BeautifulSoup`을 활용해 페이지별 데이터를 JSON/HTML로 수집한 후, Pandas를 이용해 `kyobobooks/data/kyobo_bestseller_YYYYMMDD.csv` 파일로 저장합니다.
+> - **기술 스택**: 단일 파일 구조의 HTML, CSS, JavaScript (CDN을 통한 Chart.js 및 구글 폰트 로드)
+> - **서버 CORS 우회 솔루션**: 사용자가 웹 서버 구동 없이도 로컬에서 HTML 파일을 더블 클릭해 즉시 열 수 있도록, 파이썬 스크립트(`dashboard_data_builder.py`)를 가동하여 수집된 CSV 데이터를 `dashboard_data.js` 파일 내의 전역 자바스크립트 객체(`window.DASHBOARD_DATA`)로 빌드하여 HTML에 주입합니다.
+> - **테마 모드**: 라이트 모드(Nordic Light)와 다크 모드(Glassmorphism Sleek Dark)를 동시에 지원하는 토글 스위치 구현.
+> - **레이아웃**: Modern Bento Grid 레이아웃 사용.
 
 ## Proposed Changes
 
@@ -15,31 +16,29 @@
 
 ---
 
-#### [NEW] [inspect_api.py](../src/inspect_api.py)
-Playwright를 이용해 브라우저를 백그라운드에서 실행하고, 네트워크 호출 중 교보문고 도서 데이터(예: `/api/gw/pub/...` 등)로 보이는 요청의 URL, Headers, Payload를 캡처하여 출력 및 저장하는 탐색 코드입니다.
+#### [NEW] [dashboard_data_builder.py](../src/dashboard_data_builder.py)
+`kyobobooks/data/kyobo_bestseller.csv` 데이터를 로드하고, 통계 요약 및 TF-IDF 키워드 정보를 사전에 추출하여 `kyobobooks/src/dashboard_data.js` 파일에 자바스크립트 전역 변수로 변환 및 내보내기하는 전처리 스크립트입니다.
 
-#### [MODIFY] [scaraping_prompt.md](scaraping_prompt.md)
-탐색 스크립트를 통해 확인된 실제 API URL, Header, Payload 정보와 응답 예시를 기록합니다.
+#### [NEW] [dashboard.html](../src/dashboard.html)
+웹앱 대시보드의 메인 인터페이스 파일입니다. CSS 스타일(라이트/다크 모드 변수, Bento Grid, 유리효과) 및 Chart.js 초기화 코드와 인터랙티브 검색/정렬 도서 테이블을 포함합니다.
 
-#### [NEW] [scraping.py](../src/scraping.py)
-`scaraping_prompt.md` 정보를 활용해 실제 데이터를 페이지 단위로 순차 수집하고, 차단 방지를 위한 딜레이 설정 및 `kyobobooks/data/kyobo_bestseller_YYYYMMDD.csv` 저장을 수행하는 메인 스크래핑 코드입니다.
+#### [NEW] [dashboard_data.js](../src/dashboard_data.js)
+`dashboard_data_builder.py`에 의해 자동 생성되는 로컬 데이터 파일로, 대시보드가 오프라인에서도 작동하도록 지원합니다.
 
 ---
 
 ## Verification Plan
 
 ### Automated Tests
-1. **탐색 스크립트 실행**:
+1. **데이터 빌더 실행**:
    ```bash
-   uv run python kyobobooks/src/inspect_api.py
+   uv run python kyobobooks/src/dashboard_data_builder.py
    ```
-   - 브라우저 네트워크 탭 감지를 통해 타겟 API 정보가 성공적으로 도출되는지 검증하고 `scaraping_prompt.md` 내용 업데이트를 확인합니다.
-2. **스크래퍼 스크립트 실행**:
-   ```bash
-   uv run python kyobobooks/src/scraping.py
-   ```
-   - 전체 베스트셀러 페이지 데이터 수집이 에러 없이 수행되는지 확인합니다.
-   - `kyobobooks/data/` 폴더 하위에 CSV 파일이 올바르게 생성되고, 순위/도서명/저자/출판사/평점 등의 열이 잘 작성되었는지 검증합니다.
+   - `kyobobooks/src/dashboard_data.js` 파일이 오류 없이 정상 생성되었는지 확인합니다.
+2. **대시보드 구동**:
+   - `kyobobooks/src/dashboard.html` 파일을 브라우저로 직접 실행하거나 간이 서버(Streamlit/Live server)를 기동하여 시각적으로 검증합니다.
+   - 5개의 인터랙티브 차트가 깨짐 없이 로드되고 테마 전환이 매끄러운지 확인합니다.
 
 ### Manual Verification
-- 생성된 CSV 파일을 검토하여 결측치 여부 및 인코딩 깨짐(`utf-8-sig` 적용 여부)을 점검합니다.
+- 라이트/다크 모드 전환 시 차트 글씨 색상 및 그리드 색상이 동적으로 변경되는지 점검합니다.
+- 데이터 테이블에서 검색어 입력 시 실시간으로 행이 필터링되는지 점검합니다.
