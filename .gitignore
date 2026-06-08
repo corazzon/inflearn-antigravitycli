@@ -43,5 +43,13 @@ yes24/docs/*.pdf
 yes24/docs/v2_slides_png/
 
 # 에이전트 캐시 및 설정 폴더
-.agents/
 .antigravitycli/
+
+# .agents 폴더 하위 예외 처리
+.agents/**
+!.agents/skills/
+.agents/skills/**
+!.agents/skills/py-eda/
+!.agents/skills/py-eda/**
+!.agents/skills/marp-slide/
+!.agents/skills/marp-slide/**
