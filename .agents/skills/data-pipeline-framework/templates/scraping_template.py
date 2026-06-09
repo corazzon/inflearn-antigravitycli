@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-__PROJECT_NAME__ 데이터 동적 수집 스크래퍼 스크립트
+__PROJECT_NAME__ 데이터 동적 수집 스크래퍼 스크립트 템플릿
 
 이 스크립트는 Playwright를 사용해 실시간 보안 통과 키를 자동 획득한 후,
 Requests 라이브러리를 사용해 백엔드 API에 다이렉트 쿼리를 날려 대용량 데이터를
-안전하고 빠르게 수집합니다. 429/503 등 일시적인 서버 통신 지연에 대응하기 위해
-지수 백오프(Exponential Backoff) 기반의 재시도 메커니즘을 적용하였습니다.
+범용 5대 속성 구조(name, category, value_1, value_2, detail_text)로 수집하여 안전하고 빠르게 로드합니다.
+또한 429/503 등 일시적인 서버 통신 지연에 대응하기 위해 지수 백오프 기반의 재시도 메커니즘을 적용하였습니다.
 
 치환 대상 변수:
 - PROJECT_NAME: __PROJECT_NAME__
@@ -101,7 +101,7 @@ def main_scraper():
     
     print("[Scraper] 동적 페이지 데이터 수집 루프를 기동합니다...")
     while True:
-        # 쿼리 파라미터 구성 (사용자 정의 및 치환 가능)
+        # 쿼리 파라미터 구성 (사이트 스펙에 맞춰 수정 가능)
         params = {
             "page": str(page),
             "per": "20",
@@ -120,60 +120,68 @@ def main_scraper():
             
         json_data = response.json()
         
-        # 데이터 리스트 추출 (교보문고 data.bestSeller 구조 예시 참조)
+        # 데이터 리스트 추출 (교보문고 및 기본 구조 대응)
         items_list = json_data.get("data", {}).get("bestSeller", [])
         if not items_list:
-            print(f"[Info] {page}페이지에 도서 데이터가 없습니다. 수집을 안전하게 완료합니다.")
+            # 예비 패턴 매칭 (일반 list 혹은 data 필드 바로 밑)
+            items_list = json_data.get("list", json_data.get("data", []))
+            
+        if not items_list or not isinstance(items_list, list):
+            print(f"[Info] {page}페이지에 추가 데이터가 없습니다. 수집을 안전하게 완료합니다.")
             break
             
         for item in items_list:
-            # 설정 기반 필드 맵 파싱 처리 (__FIELD_MAPPING__)
-            rank = item.get("prstRnkn", "")
-            title = item.get("cmdtName", "").strip()
-            author = item.get("chrcName", "").strip()
-            publisher = item.get("pbcmName", "").strip()
-            release_date = item.get("rlseDate", "")
-            if len(release_date) == 8:
-                release_date = f"{release_date[:4]}-{release_date[4:6]}-{release_date[6:]}"
-                
-            price = item.get("price", 0)
-            sale_price = item.get("sapr", 0)
-            rating = item.get("buyRevwRvgr", 0.0)
-            review_count = item.get("buyRevwNumc", 0)
-            cmd_id = item.get("saleCmdtid", "")
+            # 범용 5대 속성 추출 (도서, 상품, 공고 등의 키 매핑 예외 처리 및 가드)
+            rank = item.get("prstRnkn", item.get("rank", ""))
             
-            # 상세설명 None 방어 예외 처리
-            description_raw = item.get("inbukCntt")
-            description = description_raw.strip() if description_raw else ""
+            # 1. name (명칭)
+            name = item.get("cmdtName", item.get("title", item.get("name", ""))).strip()
+            
+            # 2. category (분류)
+            category = item.get("pbcmName", item.get("chrcName", item.get("company", item.get("category", "")))).strip()
+            
+            # 3. value_1 (수치 1 - 정가 또는 주요 가격, 지표)
+            value_1 = item.get("price", item.get("value_1", 0))
+            
+            # 4. value_2 (수치 2 - 판매가 또는 만족도, 평점)
+            value_2 = item.get("buyRevwRvgr", item.get("sapr", item.get("value_2", 0)))
+            
+            # 5. detail_text (상세 텍스트)
+            detail_text_raw = item.get("inbukCntt", item.get("description", item.get("detail_text", "")))
+            detail_text = detail_text_raw.strip() if detail_text_raw else ""
             
             collected_data.append({
                 "순위": rank,
-                "도서명": title,
-                "저자": author,
-                "출판사": publisher,
-                "출판일": release_date,
-                "정가": price,
-                "판매가": sale_price,
-                "평점": rating,
-                "리뷰수": review_count,
-                "상품코드": cmd_id,
-                "상세설명": description
+                "name": name,
+                "category": category,
+                "value_1": value_1,
+                "value_2": value_2,
+                "detail_text": detail_text
             })
             
         page += 1
         time.sleep(random.uniform(0.3, 0.7))
+        
+        # 안전 장치: 테스트 중 10페이지 한도 제어
+        if page > 10:
+            break
         
     if not collected_data:
         print("[Error] 수집에 실패하여 적재할 데이터가 존재하지 않습니다.")
         return
         
     df = pd.DataFrame(collected_data)
-    df = df.sort_values(by="순위").reset_index(drop=True)
+    # 순위 기준 정렬 시도 (숫자 변환 가드)
+    try:
+        df["순위"] = pd.to_numeric(df["순위"], errors="coerce")
+        df = df.sort_values(by="순위").reset_index(drop=True)
+    except Exception:
+        pass
     
     # 디렉토리 생성 및 utf-8-sig 명시적 저장 규칙 적용
-    output_dir = "__PROJECT_NAME__/data"
+    output_dir = os.path.dirname("__CSV_PATH__")
     os.makedirs(output_dir, exist_ok=True)
-    output_path = f"{output_dir}/kyobo_bestseller.csv"
+    output_path = "__CSV_PATH__"
     df.to_csv(output_path, index=False, encoding="utf-8-sig")
     print(f"[Success] 총 {len(df)}건 데이터가 {output_path} 에 성공적으로 적재 완료되었습니다.")
 

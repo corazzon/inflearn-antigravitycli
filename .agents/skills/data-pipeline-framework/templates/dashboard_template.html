@@ -476,9 +476,9 @@
     </div>
 
     <div class="card metric-card">
-      <div class="metric-icon-box" style="background: linear-gradient(135deg, #10b981, #059669);"><i class="fa-solid fa-won-sign"></i></div>
+      <div class="metric-icon-box" style="background: linear-gradient(135deg, #10b981, #059669);"><i class="fa-solid fa-calculator"></i></div>
       <div class="metric-info">
-        <h3>평균 정가</h3>
+        <h3>평균 수치 1 (value_1)</h3>
         <div class="metric-value" id="metricPrice">0</div>
       </div>
     </div>
@@ -486,44 +486,44 @@
     <div class="card metric-card">
       <div class="metric-icon-box" style="background: linear-gradient(135deg, #f59e0b, #d97706);"><i class="fa-solid fa-star"></i></div>
       <div class="metric-info">
-        <h3>평균 평점</h3>
+        <h3>평균 수치 2 (value_2)</h3>
         <div class="metric-value" id="metricRating">0.0</div>
       </div>
     </div>
 
     <div class="card metric-card">
-      <div class="metric-icon-box" style="background: linear-gradient(135deg, #ec4899, #be185d);"><i class="fa-solid fa-comments"></i></div>
+      <div class="metric-icon-box" style="background: linear-gradient(135deg, #ec4899, #be185d);"><i class="fa-solid fa-arrow-trend-up"></i></div>
       <div class="metric-info">
-        <h3>최고 리뷰 수</h3>
+        <h3>최고 수치 2 (value_2)</h3>
         <div class="metric-value" id="metricReviews">0</div>
       </div>
     </div>
 
     <!-- 차트 구역 -->
-    <!-- 차트 1: 가격 구간 분포 -->
+    <!-- 차트 1: value_1 구간 분포 -->
     <div class="card chart-large" id="cardPriceChart">
       <div class="chart-header">
-        <div class="chart-title"><i class="fa-solid fa-tags"></i> 정가 및 판매가 분포</div>
+        <div class="chart-title"><i class="fa-solid fa-tags"></i> value_1 수치 구간 분포</div>
       </div>
       <div class="chart-wrapper">
         <canvas id="priceChart"></canvas>
       </div>
     </div>
 
-    <!-- 차트 2: 출판사 점유율 -->
+    <!-- 차트 2: category 점유율 -->
     <div class="card chart-small" id="cardPublisherChart">
       <div class="chart-header">
-        <div class="chart-title"><i class="fa-solid fa-building"></i> 출판사 점유율 (Top 10)</div>
+        <div class="chart-title"><i class="fa-solid fa-chart-pie"></i> 카테고리 점유율 (Top 10)</div>
       </div>
       <div class="chart-wrapper">
         <canvas id="publisherChart"></canvas>
       </div>
     </div>
 
-    <!-- 차트 3: 평점 분포 -->
+    <!-- 차트 3: 만족도 수치 분포 -->
     <div class="card chart-small" id="cardRatingChart">
       <div class="chart-header">
-        <div class="chart-title"><i class="fa-solid fa-star-half-stroke"></i> 데이터 만족도 (평점)</div>
+        <div class="chart-title"><i class="fa-solid fa-star-half-stroke"></i> 지표 분포 (value_2)</div>
       </div>
       <div class="chart-wrapper">
         <canvas id="ratingChart"></canvas>
@@ -533,17 +533,17 @@
     <!-- 차트 4: 키워드 중요도 (TF-IDF) -->
     <div class="card chart-medium" id="cardKeywordChart">
       <div class="chart-header">
-        <div class="chart-title"><i class="fa-solid fa-key"></i> 상세설명 핵심 키워드 (TF-IDF)</div>
+        <div class="chart-title"><i class="fa-solid fa-key"></i> detail_text 핵심 키워드 (TF-IDF)</div>
       </div>
       <div class="chart-wrapper">
         <canvas id="keywordChart"></canvas>
       </div>
     </div>
 
-    <!-- 차트 5: 상관관계 (평점 vs 리뷰수) -->
+    <!-- 차트 5: 상관관계 (value_1 vs value_2) -->
     <div class="card chart-medium" id="cardScatterChart">
       <div class="chart-header">
-        <div class="chart-title"><i class="fa-solid fa-circle-nodes"></i> 평점 대비 리뷰 수 상관관계</div>
+        <div class="chart-title"><i class="fa-solid fa-circle-nodes"></i> value_1 대비 value_2 상관관계</div>
       </div>
       <div class="chart-wrapper">
         <canvas id="scatterChart"></canvas>
@@ -560,11 +560,11 @@
       <div class="table-controls">
         <div class="search-input-wrapper">
           <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" class="search-input" id="tableSearch" placeholder="도서명, 저자, 출판사 실시간 검색...">
+          <input type="text" class="search-input" id="tableSearch" placeholder="이름(name), 카테고리(category) 실시간 검색...">
         </div>
         <div>
           <select class="filter-select" id="pubFilter">
-            <option value="">전체 출판사 보기</option>
+            <option value="">전체 카테고리 보기</option>
           </select>
         </div>
       </div>
@@ -575,14 +575,10 @@
           <thead>
             <tr>
               <th onclick="sortTable('순위')">순위 <i class="fa-solid fa-sort"></i></th>
-              <th onclick="sortTable('도서명')">도서명 <i class="fa-solid fa-sort"></i></th>
-              <th onclick="sortTable('저자')">저자 <i class="fa-solid fa-sort"></i></th>
-              <th onclick="sortTable('출판사')">출판사 <i class="fa-solid fa-sort"></i></th>
-              <th onclick="sortTable('출판일')">출판일 <i class="fa-solid fa-sort"></i></th>
-              <th onclick="sortTable('정가')">정가 <i class="fa-solid fa-sort"></i></th>
-              <th onclick="sortTable('판매가')">판매가 <i class="fa-solid fa-sort"></i></th>
-              <th onclick="sortTable('평점')">평점 <i class="fa-solid fa-sort"></i></th>
-              <th onclick="sortTable('리뷰수')">리뷰 <i class="fa-solid fa-sort"></i></th>
+              <th onclick="sortTable('name')">명칭 (name) <i class="fa-solid fa-sort"></i></th>
+              <th onclick="sortTable('category')">분류 (category) <i class="fa-solid fa-sort"></i></th>
+              <th onclick="sortTable('value_1')">수치 1 <i class="fa-solid fa-sort"></i></th>
+              <th onclick="sortTable('value_2')">수치 2 <i class="fa-solid fa-sort"></i></th>
             </tr>
           </thead>
           <tbody id="booksTableBody">
@@ -598,36 +594,27 @@
   <div class="modal" id="bookModal" onclick="closeModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
       <span class="modal-close" onclick="document.getElementById('bookModal').style.display='none'">&times;</span>
-      <h2 class="modal-title" id="mTitle">[0위] 도서 제목 로딩중...</h2>
+      <h2 class="modal-title" id="mTitle">[0위] 데이터 명칭 로딩중...</h2>
       
       <div class="modal-meta">
-        <div><i class="fa-solid fa-user"></i> 저자: <span id="mAuthor">-</span></div>
-        <div><i class="fa-solid fa-building"></i> 출판사: <span id="mPub">-</span></div>
-        <div><i class="fa-solid fa-calendar-days"></i> 출판일: <span id="mDate">-</span></div>
+        <div><i class="fa-solid fa-circle-info"></i> 명칭: <span id="mAuthor">-</span></div>
+        <div><i class="fa-solid fa-tags"></i> 분류: <span id="mPub">-</span></div>
       </div>
       
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
         <div style="background: var(--card-bg); padding: 0.8rem; border-radius: 8px; border: 1px solid var(--card-border); text-align: center;">
-          <div style="font-size: 0.75rem; color: var(--text-sub); margin-bottom: 0.2rem;">정가</div>
-          <div style="font-weight: 600; font-size: 1rem;" id="mPrice">0원</div>
+          <div style="font-size: 0.75rem; color: var(--text-sub); margin-bottom: 0.2rem;">수치 1 (value_1)</div>
+          <div style="font-weight: 600; font-size: 1rem; color: #10b981;" id="mPrice">0</div>
         </div>
         <div style="background: var(--card-bg); padding: 0.8rem; border-radius: 8px; border: 1px solid var(--card-border); text-align: center;">
-          <div style="font-size: 0.75rem; color: var(--text-sub); margin-bottom: 0.2rem;">판매가</div>
-          <div style="font-weight: 600; font-size: 1rem; color: #10b981;" id="mSapr">0원</div>
-        </div>
-        <div style="background: var(--card-bg); padding: 0.8rem; border-radius: 8px; border: 1px solid var(--card-border); text-align: center;">
-          <div style="font-size: 0.75rem; color: var(--text-sub); margin-bottom: 0.2rem;">평점</div>
-          <div style="font-weight: 600; font-size: 1rem; color: #f59e0b;" id="mRating">★ 0.00점</div>
-        </div>
-        <div style="background: var(--card-bg); padding: 0.8rem; border-radius: 8px; border: 1px solid var(--card-border); text-align: center;">
-          <div style="font-size: 0.75rem; color: var(--text-sub); margin-bottom: 0.2rem;">리뷰 수</div>
-          <div style="font-weight: 600; font-size: 1rem;" id="mReview">0건</div>
+          <div style="font-size: 0.75rem; color: var(--text-sub); margin-bottom: 0.2rem;">수치 2 (value_2)</div>
+          <div style="font-weight: 600; font-size: 1rem; color: #f59e0b;" id="mRating">0.00</div>
         </div>
       </div>
 
-      <h3 class="modal-desc-title"><i class="fa-solid fa-align-left"></i> 도서 상세 정보</h3>
+      <h3 class="modal-desc-title"><i class="fa-solid fa-align-left"></i> 상세 정보 (detail_text)</h3>
       <div class="modal-desc-body" id="mDesc">
-        도서 상세 소개 글이 여기에 동적으로 렌더링됩니다.
+        상세 정보 텍스트 내용이 여기에 동적으로 렌더링됩니다.
       </div>
     </div>
   </div>
@@ -642,15 +629,15 @@
     // 1. 요약 통계(Metrics) 연동
     if (window.DASHBOARD_METRICS) {
       document.getElementById('metricTotal').textContent = window.DASHBOARD_METRICS.total_books.toLocaleString() + '개';
-      document.getElementById('metricPrice').textContent = window.DASHBOARD_METRICS.avg_price.toLocaleString() + '원';
-      document.getElementById('metricRating').textContent = window.DASHBOARD_METRICS.avg_rating.toFixed(2) + '점';
-      document.getElementById('metricReviews').textContent = window.DASHBOARD_METRICS.max_reviews.toLocaleString() + '건';
+      document.getElementById('metricPrice').textContent = window.DASHBOARD_METRICS.avg_price.toLocaleString();
+      document.getElementById('metricRating').textContent = window.DASHBOARD_METRICS.avg_rating.toFixed(2);
+      document.getElementById('metricReviews').textContent = window.DASHBOARD_METRICS.max_reviews.toLocaleString();
     }
 
-    // 2. 출판사 필터 드롭다운 초기화
+    // 2. 카테고리 필터 드롭다운 초기화
     if (window.DASHBOARD_BOOKS) {
       const pubSelect = document.getElementById('pubFilter');
-      const publishers = [...new Set(window.DASHBOARD_BOOKS.map(book => book.출판사))].sort();
+      const publishers = [...new Set(window.DASHBOARD_BOOKS.map(book => book.category))].sort();
       publishers.forEach(pub => {
         if(pub) {
           const opt = document.createElement('option');
@@ -684,7 +671,7 @@
 
       if (!chartData) return;
 
-      // 4-1. Chart 1: 정가 vs 판매가 구간 분포 차트
+      // 4-1. Chart 1: value_1 분포 차트
       if (charts.price) charts.price.destroy();
       const ctxPrice = document.getElementById('priceChart');
       if (ctxPrice && chartData.price_chart && chartData.price_chart.labels && chartData.price_chart.labels.length > 0) {
@@ -695,17 +682,10 @@
             labels: chartData.price_chart.labels,
             datasets: [
               {
-                label: '정가 기준 도서 수',
+                label: '수치 구간 분포',
                 data: chartData.price_chart.regular,
                 backgroundColor: colors.primary + '80',
                 borderColor: colors.primary,
-                borderWidth: 1.5
-              },
-              {
-                label: '판매가 기준 도서 수',
-                data: chartData.price_chart.sale,
-                backgroundColor: colors.secondary + '80',
-                borderColor: colors.secondary,
                 borderWidth: 1.5
               }
             ]
@@ -726,7 +706,7 @@
         document.getElementById('cardPriceChart').style.display = 'none';
       }
 
-      // 4-2. Chart 2: 출판사 점유율 (Doughnut)
+      // 4-2. Chart 2: 카테고리 점유율 (Doughnut)
       if (charts.publisher) charts.publisher.destroy();
       const ctxPub = document.getElementById('publisherChart');
       if (ctxPub && chartData.publisher_chart && chartData.publisher_chart.labels && chartData.publisher_chart.labels.length > 0) {
@@ -746,7 +726,7 @@
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { display: false } // 공간 제약 상 범례 숨김 처리
+              legend: { display: false }
             }
           }
         });
@@ -754,7 +734,7 @@
         document.getElementById('cardPublisherChart').style.display = 'none';
       }
 
-      // 4-3. Chart 3: 만족도 평점 분포 (Pie)
+      // 4-3. Chart 3: 지표 분포 (Pie)
       if (charts.rating) charts.rating.destroy();
       const ctxRating = document.getElementById('ratingChart');
       if (ctxRating && chartData.rating_chart && chartData.rating_chart.labels && chartData.rating_chart.labels.length > 0) {
@@ -816,7 +796,7 @@
         document.getElementById('cardKeywordChart').style.display = 'none';
       }
 
-      // 4-5. Chart 5: 평점 대비 리뷰 수 상관 산점도
+      // 4-5. Chart 5: value_1 대비 value_2 상관 산점도
       if (charts.scatter) charts.scatter.destroy();
       const ctxScatter = document.getElementById('scatterChart');
       if (ctxScatter && chartData.scatter_chart && chartData.scatter_chart.length > 0) {
@@ -825,7 +805,7 @@
           type: 'scatter',
           data: {
             datasets: [{
-              label: '도서 개별 포지션',
+              label: '개별 데이터 포지션',
               data: chartData.scatter_chart,
               backgroundColor: 'rgba(236, 72, 153, 0.7)',
               borderColor: '#ec4899',
@@ -843,19 +823,19 @@
                 callbacks: {
                   label: function(context) {
                     const item = context.raw;
-                    return `[${item.rank}위] ${item.title} (평점: ${item.x}점, 리뷰: ${item.y}건)`;
+                    return `[${item.rank}위] ${item.title} (value_1: ${item.x}, value_2: ${item.y})`;
                   }
                 }
               }
             },
             scales: {
               x: {
-                title: { display: true, text: '평점 (점)', color: colors.text },
+                title: { display: true, text: 'value_1', color: colors.text },
                 grid: { color: colors.grid },
                 ticks: { color: colors.text }
               },
               y: {
-                title: { display: true, text: '리뷰 수 (건)', color: colors.text },
+                title: { display: true, text: 'value_2', color: colors.text },
                 grid: { color: colors.grid },
                 ticks: { color: colors.text }
               }
@@ -877,25 +857,17 @@
         tr.onclick = () => openModal(book);
 
         const rankVal = book.순위 || '-';
-        const titleVal = book.도서명 || '-';
-        const authorVal = book.저자 || '-';
-        const pubVal = book.출판사 || '-';
-        const dateVal = book.출판일 || '-';
-        const priceVal = book.정가 ? book.정가.toLocaleString() + '원' : '-';
-        const salePriceVal = book.판매가 ? book.판매가.toLocaleString() + '원' : '-';
-        const ratingVal = book.평점 !== undefined ? book.평점.toFixed(2) : '-';
-        const reviewVal = book.리뷰수 !== undefined ? book.리뷰수.toLocaleString() : '-';
+        const nameVal = book.name || '-';
+        const catVal = book.category || '-';
+        const val1Val = book.value_1 !== undefined ? book.value_1.toLocaleString() : '-';
+        const val2Val = book.value_2 !== undefined ? book.value_2.toLocaleString() : '-';
 
         tr.innerHTML = `
           <td><span class="badge-rank">${rankVal}</span></td>
-          <td style="font-weight: 500;" title="${titleVal}">${titleVal}</td>
-          <td>${authorVal}</td>
-          <td>${pubVal}</td>
-          <td>${dateVal}</td>
-          <td>${priceVal}</td>
-          <td style="color: #10b981; font-weight: 600;">${salePriceVal}</td>
-          <td style="color: #f59e0b; font-weight: 600;"><i class="fa-solid fa-star"></i> ${ratingVal}</td>
-          <td>${reviewVal}</td>
+          <td style="font-weight: 500;" title="${nameVal}">${nameVal}</td>
+          <td>${catVal}</td>
+          <td>${val1Val}</td>
+          <td style="color: #10b981; font-weight: 600;">${val2Val}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -907,11 +879,10 @@
 
       filteredBooks = window.DASHBOARD_BOOKS.filter(book => {
         const matchesSearch = 
-          (book.도서명 && book.도서명.toLowerCase().includes(searchVal)) ||
-          (book.저자 && book.저자.toLowerCase().includes(searchVal)) ||
-          (book.출판사 && book.출판사.toLowerCase().includes(searchVal));
+          (book.name && book.name.toLowerCase().includes(searchVal)) ||
+          (book.category && book.category.toLowerCase().includes(searchVal));
           
-        const matchesPub = !pubVal || book.출판사 === pubVal;
+        const matchesPub = !pubVal || book.category === pubVal;
 
         return matchesSearch && matchesPub;
       });
@@ -949,16 +920,13 @@
     // 6. 상세 모달 팝업 제어
     function openModal(book) {
       const rankVal = book.순위 || '-';
-      const titleVal = book.도서명 || '-';
-      document.getElementById('mTitle').textContent = `[${rankVal}위] ${titleVal}`;
-      document.getElementById('mAuthor').textContent = book.저자 || '-';
-      document.getElementById('mPub').textContent = book.출판사 || '-';
-      document.getElementById('mDate').textContent = book.출판일 || '-';
-      document.getElementById('mPrice').textContent = book.정가 ? book.정가.toLocaleString() + '원' : '-';
-      document.getElementById('mSapr').textContent = book.판매가 ? book.판매가.toLocaleString() + '원' : '-';
-      document.getElementById('mRating').textContent = book.평점 !== undefined ? '★ ' + book.평점.toFixed(2) + '점' : '-';
-      document.getElementById('mReview').textContent = book.리뷰수 !== undefined ? book.리뷰수.toLocaleString() + '건' : '-';
-      document.getElementById('mDesc').textContent = book.상세설명 || '상세 정보 정보가 제공되지 않습니다.';
+      const nameVal = book.name || '-';
+      document.getElementById('mTitle').textContent = `[${rankVal}위] ${nameVal}`;
+      document.getElementById('mAuthor').textContent = book.name || '-';
+      document.getElementById('mPub').textContent = book.category || '-';
+      document.getElementById('mPrice').textContent = book.value_1 !== undefined ? book.value_1.toLocaleString() : '-';
+      document.getElementById('mRating').textContent = book.value_2 !== undefined ? book.value_2.toLocaleString() : '-';
+      document.getElementById('mDesc').textContent = book.detail_text || '상세 정보 정보가 제공되지 않습니다.';
 
       document.getElementById('bookModal').style.display = 'flex';
     }

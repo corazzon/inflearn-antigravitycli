@@ -3,8 +3,9 @@
 __PROJECT_NAME__ 데이터 탐색적 데이터 분석(EDA) 및 시각화 스크립트 템플릿
 
 이 스크립트는 수집된 CSV 데이터를 로드하여 데이터 무결성을 검증하고 결측치/기술통계를 분석하며,
+5대 공통 범용 속성(name, category, value_1, value_2, detail_text) 기준으로
 11가지 시각화 차트 이미지(일변량, 이변량, 다변량)를 생성하여 저장합니다.
-또한 scikit-learn TF-IDF Vectorizer를 통해 상세설명 텍스트 중요 키워드를 추출합니다.
+또한 scikit-learn TF-IDF Vectorizer를 통해 detail_text 텍스트의 중요 키워드를 추출합니다.
 
 치환 대상 변수:
 - PROJECT_NAME: __PROJECT_NAME__
@@ -78,128 +79,147 @@ def run_eda():
     print(f"[EDA] 기초 통계 로그가 저장되었습니다: {txt_report_path}")
     
     # ==================== 시각화 파트 ====================
-    # 1. 정가 분포 (일변량 1)
-    if '정가' in df.columns:
+    # 1. value_1 분포 (일변량 1)
+    if 'value_1' in df.columns:
         plt.figure(figsize=(8, 5))
-        plt.hist(df['정가'], bins=20, color='skyblue', edgecolor='black', alpha=0.7)
-        plt.title('도서 정가 분포 히스토그램')
-        plt.xlabel('정가 (원)')
-        plt.ylabel('도서 수')
-        plt.grid(axis='y', linestyle='--', alpha=0.7)
-        plt.tight_layout()
-        plt.savefig(f"{image_dir}/01_price_histogram.png")
-        plt.close()
+        # 숫자형 변환 가드
+        val1_numeric = pd.to_numeric(df['value_1'], errors='coerce').dropna()
+        if not val1_numeric.empty:
+            plt.hist(val1_numeric, bins=20, color='skyblue', edgecolor='black', alpha=0.7)
+            plt.title('value_1(수치 1) 분포 히스토그램')
+            plt.xlabel('value_1')
+            plt.ylabel('수량')
+            plt.grid(axis='y', linestyle='--', alpha=0.7)
+            plt.tight_layout()
+            plt.savefig(f"{image_dir}/01_price_histogram.png")
+            plt.close()
         
-    # 2. 판매가 분포 (일변량 2)
-    if '판매가' in df.columns:
+    # 2. value_2 분포 (일변량 2)
+    if 'value_2' in df.columns:
         plt.figure(figsize=(8, 5))
-        plt.hist(df['판매가'], bins=20, color='salmon', edgecolor='black', alpha=0.7)
-        plt.title('도서 판매가 분포 히스토그램')
-        plt.xlabel('판매가 (원)')
-        plt.ylabel('도서 수')
-        plt.grid(axis='y', linestyle='--', alpha=0.7)
-        plt.tight_layout()
-        plt.savefig(f"{image_dir}/02_sale_price_histogram.png")
-        plt.close()
+        val2_numeric = pd.to_numeric(df['value_2'], errors='coerce').dropna()
+        if not val2_numeric.empty:
+            plt.hist(val2_numeric, bins=20, color='salmon', edgecolor='black', alpha=0.7)
+            plt.title('value_2(수치 2) 분포 히스토그램')
+            plt.xlabel('value_2')
+            plt.ylabel('수량')
+            plt.grid(axis='y', linestyle='--', alpha=0.7)
+            plt.tight_layout()
+            plt.savefig(f"{image_dir}/02_sale_price_histogram.png")
+            plt.close()
     
-    # 3. 도서 평점 분포 (일변량 3)
-    if '평점' in df.columns:
+    # 3. 순위 또는 인덱스 평점 분포 (일변량 3)
+    if 'value_2' in df.columns:
         plt.figure(figsize=(8, 5))
-        plt.hist(df['평점'], bins=15, color='gold', edgecolor='black', alpha=0.7)
-        plt.title('도서 평점 분포')
-        plt.xlabel('평점 (점)')
-        plt.ylabel('도서 수')
-        plt.grid(axis='y', linestyle='--', alpha=0.7)
-        plt.tight_layout()
-        plt.savefig(f"{image_dir}/03_rating_distribution.png")
-        plt.close()
+        val2_numeric = pd.to_numeric(df['value_2'], errors='coerce').dropna()
+        if not val2_numeric.empty:
+            plt.hist(val2_numeric, bins=15, color='gold', edgecolor='black', alpha=0.7)
+            plt.title('만족도 지표(value_2) 상세 분포')
+            plt.xlabel('value_2')
+            plt.ylabel('수량')
+            plt.grid(axis='y', linestyle='--', alpha=0.7)
+            plt.tight_layout()
+            plt.savefig(f"{image_dir}/03_rating_distribution.png")
+            plt.close()
         
-    # 4. 리뷰 수 분포 (일변량 4)
-    if '리뷰수' in df.columns:
-        plt.figure(figsize=(8, 5))
-        plt.boxplot(df['리뷰수'], vert=False, patch_artist=True, 
-                    boxprops=dict(facecolor='lightgreen', color='black'),
-                    medianprops=dict(color='red'))
-        plt.title('도서 리뷰 수 상자그림(Boxplot)')
-        plt.xlabel('리뷰 수 (건)')
-        plt.grid(axis='x', linestyle='--', alpha=0.7)
-        plt.tight_layout()
-        plt.savefig(f"{image_dir}/04_review_count_boxplot.png")
-        plt.close()
+    # 4. 수치 2 상자그림 (일변량 4)
+    if 'value_2' in df.columns:
+        val2_numeric = pd.to_numeric(df['value_2'], errors='coerce').dropna()
+        if not val2_numeric.empty:
+            plt.figure(figsize=(8, 5))
+            plt.boxplot(val2_numeric, vert=False, patch_artist=True, 
+                        boxprops=dict(facecolor='lightgreen', color='black'),
+                        medianprops=dict(color='red'))
+            plt.title('value_2 상자그림(Boxplot)')
+            plt.xlabel('value_2 값')
+            plt.grid(axis='x', linestyle='--', alpha=0.7)
+            plt.tight_layout()
+            plt.savefig(f"{image_dir}/04_review_count_boxplot.png")
+            plt.close()
         
-    # 5. 상위 10개 출판사 빈도 (일변량 5)
-    if '출판사' in df.columns:
-        pub_counts = df['출판사'].value_counts().head(10)
+    # 5. 상위 10개 category 빈도 (일변량 5)
+    if 'category' in df.columns:
+        cat_counts = df['category'].value_counts().head(10)
         plt.figure(figsize=(10, 6))
-        pub_counts.plot(kind='barh', color='orchid', edgecolor='black', alpha=0.8)
-        plt.title('상위 10개 출판사 도서 빈도')
-        plt.xlabel('도서 수')
-        plt.ylabel('출판사명')
+        cat_counts.plot(kind='barh', color='orchid', edgecolor='black', alpha=0.8)
+        plt.title('상위 10개 category(그룹) 점유 빈도')
+        plt.xlabel('수량')
+        plt.ylabel('카테고리명')
         plt.gca().invert_yaxis()
         plt.grid(axis='x', linestyle='--', alpha=0.7)
         plt.tight_layout()
         plt.savefig(f"{image_dir}/05_top_publishers.png")
         plt.close()
     
-    # 6. 상위 10개 저자 빈도 (일변량 6)
-    if '저자' in df.columns:
-        author_counts = df['저자'].value_counts().head(10)
+    # 6. 상위 10개 name 빈도 또는 고유값 점유율 (일변량 6)
+    if 'name' in df.columns:
+        name_counts = df['name'].value_counts().head(10)
         plt.figure(figsize=(10, 6))
-        author_counts.plot(kind='barh', color='teal', edgecolor='black', alpha=0.8)
-        plt.title('상위 10개 저자 도서 빈도')
-        plt.xlabel('도서 수')
-        plt.ylabel('저자명')
+        name_counts.plot(kind='barh', color='teal', edgecolor='black', alpha=0.8)
+        plt.title('상위 10개 고유 name 빈도')
+        plt.xlabel('노출 수')
+        plt.ylabel('이름')
         plt.gca().invert_yaxis()
         plt.grid(axis='x', linestyle='--', alpha=0.7)
         plt.tight_layout()
         plt.savefig(f"{image_dir}/06_top_authors.png")
         plt.close()
         
-    # 7. 정가 vs 판매가 산점도 (이변량 1)
-    if '정가' in df.columns and '판매가' in df.columns:
-        plt.figure(figsize=(8, 6))
-        plt.scatter(df['정가'], df['판매가'], color='blue', alpha=0.5, edgecolor='none')
-        max_val = max(df['정가'].max(), df['판매가'].max())
-        plt.plot([0, max_val], [0, max_val], color='red', linestyle='--', label='정가=판매가 (할인 없음)')
-        plt.title('정가 대비 판매가 산점도')
-        plt.xlabel('정가 (원)')
-        plt.ylabel('판매가 (원)')
-        plt.legend()
-        plt.grid(True, linestyle='--', alpha=0.5)
-        plt.tight_layout()
-        plt.savefig(f"{image_dir}/07_price_vs_sale_price.png")
-        plt.close()
+    # 7. value_1 vs value_2 산점도 (이변량 1)
+    if 'value_1' in df.columns and 'value_2' in df.columns:
+        v1 = pd.to_numeric(df['value_1'], errors='coerce')
+        v2 = pd.to_numeric(df['value_2'], errors='coerce')
+        valid_idx = v1.notnull() & v2.notnull()
+        if valid_idx.any():
+            plt.figure(figsize=(8, 6))
+            plt.scatter(v1[valid_idx], v2[valid_idx], color='blue', alpha=0.5, edgecolor='none')
+            plt.title('value_1 대비 value_2 상관 산점도')
+            plt.xlabel('value_1')
+            plt.ylabel('value_2')
+            plt.grid(True, linestyle='--', alpha=0.5)
+            plt.tight_layout()
+            plt.savefig(f"{image_dir}/07_price_vs_sale_price.png")
+            plt.close()
         
-    # 8. 평점 vs 리뷰 수 관계 (이변량 2)
-    if '평점' in df.columns and '리뷰수' in df.columns:
-        plt.figure(figsize=(8, 6))
-        plt.scatter(df['평점'], df['리뷰수'], color='darkorange', alpha=0.6, edgecolor='black')
-        plt.title('평점과 리뷰 수 상관관계 산점도')
-        plt.xlabel('평점 (점)')
-        plt.ylabel('리뷰 수 (건)')
-        plt.grid(True, linestyle='--', alpha=0.5)
-        plt.tight_layout()
-        plt.savefig(f"{image_dir}/08_rating_vs_reviews.png")
-        plt.close()
+    # 8. value_2 상세관계 산점도 (이변량 2)
+    if 'value_2' in df.columns:
+        v2 = pd.to_numeric(df['value_2'], errors='coerce').dropna()
+        if not v2.empty:
+            plt.figure(figsize=(8, 6))
+            plt.scatter(df.index, df['value_2'], color='darkorange', alpha=0.6, edgecolor='black')
+            plt.title('데이터 인덱스 대비 value_2 산포도')
+            plt.xlabel('Index')
+            plt.ylabel('value_2')
+            plt.grid(True, linestyle='--', alpha=0.5)
+            plt.tight_layout()
+            plt.savefig(f"{image_dir}/08_rating_vs_reviews.png")
+            plt.close()
         
-    # 9. 상위 10개 출판사별 평균 평점 분포 (이변량 3)
-    if '출판사' in df.columns and '평점' in df.columns:
-        top_pubs = df['출판사'].value_counts().head(10).index
-        df_top_pubs = df[df['출판사'].isin(top_pubs)]
-        if not df_top_pubs.empty:
+    # 9. 상위 10개 category별 평균 value_2 분포 (이변량 3)
+    if 'category' in df.columns and 'value_2' in df.columns:
+        top_cats = df['category'].value_counts().head(10).index
+        df_top_cats = df[df['category'].isin(top_cats)].copy()
+        df_top_cats['value_2'] = pd.to_numeric(df_top_cats['value_2'], errors='coerce')
+        df_top_cats = df_top_cats.dropna(subset=['value_2'])
+        if not df_top_cats.empty:
             plt.figure(figsize=(12, 6))
-            sns.boxplot(x='출판사', y='평점', data=df_top_pubs, hue='출판사', legend=False, palette='Set3')
-            plt.title('상위 10개 출판사별 도서 평점 분포')
+            sns.boxplot(x='category', y='value_2', data=df_top_cats, hue='category', legend=False, palette='Set3')
+            plt.title('상위 10개 category별 value_2 수치 분포')
             plt.xticks(rotation=45)
-            plt.xlabel('출판사')
-            plt.ylabel('평점 (점)')
+            plt.xlabel('Category')
+            plt.ylabel('value_2')
             plt.grid(axis='y', linestyle='--', alpha=0.7)
             plt.tight_layout()
             plt.savefig(f"{image_dir}/09_publisher_rating_boxplot.png")
             plt.close()
             
     # 10. 상관관계 히트맵 (다변량 1)
-    numeric_cols = [col for col in ['순위', '정가', '판매가', '평점', '리뷰수'] if col in df.columns]
+    numeric_cols = []
+    for col in ['순위', 'value_1', 'value_2']:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors='coerce')
+            numeric_cols.append(col)
+    
     if len(numeric_cols) >= 2:
         corr_matrix = df[numeric_cols].corr()
         plt.figure(figsize=(8, 6))
@@ -209,9 +229,9 @@ def run_eda():
         plt.savefig(f"{image_dir}/10_correlation_heatmap.png")
         plt.close()
         
-    # 11. 상세설명 텍스트 중요 키워드 TF-IDF 분석
-    if '상세설명' in df.columns:
-        descriptions = df['상세설명'].dropna().tolist()
+    # 11. detail_text 텍스트 중요 키워드 TF-IDF 분석
+    if 'detail_text' in df.columns:
+        descriptions = df['detail_text'].dropna().tolist()
         if descriptions:
             stop_words_korean = ['이', '그', '저', '것', '수', '등', '및', '를', '을', '에', '의', '은', '는', '도', '으로', '로', '한다', '있다', '대한', '위한', '통해', '에서', '하여', '따라', '책은', '가장', '다양한', '제시하며', '제공하며']
             
@@ -227,7 +247,7 @@ def run_eda():
                 
                 plt.figure(figsize=(10, 8))
                 plt.barh(tfidf_df['keyword'].head(15), tfidf_df['tfidf_weight'].head(15), color='darkgrey', edgecolor='black', alpha=0.8)
-                plt.title('상세설명 본문 핵심 키워드 중요도 (TF-IDF 상위 15개)')
+                plt.title('detail_text 본문 핵심 키워드 중요도 (TF-IDF 상위 15개)')
                 plt.xlabel('평균 TF-IDF 가중치')
                 plt.ylabel('핵심 키워드')
                 plt.gca().invert_yaxis()
