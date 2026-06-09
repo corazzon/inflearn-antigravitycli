@@ -47,9 +47,16 @@ yes24/docs/v2_slides_png/
 
 # .agents 폴더 하위 예외 처리
 .agents/**
+!.agents/agents/
+!.agents/agents/**
+!.agents/rules/
+!.agents/rules/**
 !.agents/skills/
 .agents/skills/**
 !.agents/skills/py-eda/
 !.agents/skills/py-eda/**
 !.agents/skills/marp-slide/
 !.agents/skills/marp-slide/**
+!.agents/skills/data-pipeline-framework/
+!.agents/skills/data-pipeline-framework/**
+
