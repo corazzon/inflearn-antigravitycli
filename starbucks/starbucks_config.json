@@ -1,0 +1,20 @@
+{
+  "project_name": "starbucks",
+  "target_url": "https://www.starbucks.co.kr/store/store_map.do",
+  "api_url": "https://www.starbucks.co.kr/store/getStore.do",
+  "retry_config": {
+    "max_retries": 5,
+    "backoff_factor": 1.5
+  },
+  "column_mapping": {
+    "name": "매장명",
+    "category": "시도명",
+    "value_1": "위도 (Latitude)",
+    "value_2": "경도 (Longitude)",
+    "detail_text": "매장 연락처 및 상세 주소"
+  },
+  "hooks": {
+    "post_scrape": "git add starbucks/data/ && git commit -m 'feat(starbucks): Scraped and updated raw store data' || true",
+    "post_eda": "git add starbucks/images/ starbucks/docs/ starbucks/reports/ starbucks/src/ && git commit -m 'feat(starbucks): Built EDA charts and updated dashboard' || true"
+  }
+}
