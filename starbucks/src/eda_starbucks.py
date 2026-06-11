@@ -202,4 +202,40 @@ plt.close()
 print("\n--- [표 10] 매장명 TF-IDF 키워드 상위 30개 및 가중치 ---")
 print(tfidf_top30.reset_index(drop=True).to_markdown())
 
+# 11. [일변량] 스타벅스 매장명 글자 수 분포
+df['매장명_길이'] = df['매장명'].fillna('').str.len()
+setup_plot("스타벅스 매장명 글자 수 분포", "글자 수 (자)", "매장 수")
+sns.histplot(df['매장명_길이'], bins=15, kde=True, color='#006241')
+plt.tight_layout()
+plt.savefig(os.path.join(IMAGE_DIR, "11_name_length_distribution.png"), dpi=150)
+plt.close()
+print("\n--- [표 11] 매장명 글자 수 기술통계 ---")
+print(df['매장명_길이'].describe().to_frame().to_markdown())
+
+# 12. [이변량] 주요 시도별 드라이브스루(DT) 매장 비율
+df['is_dt'] = df['매장명'].fillna('').str.upper().str.contains('DT')
+dt_ratio = df.groupby('시도명')['is_dt'].agg(['count', 'sum', 'mean']).rename(columns={'sum': 'DT매장수', 'mean': 'DT비율'})
+dt_ratio = dt_ratio.sort_values(by='DT비율', ascending=False)
+setup_plot("전국 시도별 드라이브스루(DT) 매장 비율", "시도명", "DT 매장 비율", figsize=(12, 6))
+sns.barplot(x=dt_ratio.index, y=dt_ratio['DT비율'], palette="Greens_r", hue=dt_ratio.index, legend=False)
+plt.gca().yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: '{:.0%}'.format(y)))
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.savefig(os.path.join(IMAGE_DIR, "12_sido_dt_ratio.png"), dpi=150)
+plt.close()
+print("\n--- [표 12] 시도별 DT 매장 비율 통계 ---")
+print(dt_ratio.to_markdown())
+
+# 13. [이변량] 오픈연도별 관리코드 분포 산점도 (출점 순번 신뢰성 확인)
+# 결측치 제거
+df_code = df.dropna(subset=['오픈연도', '관리코드'])
+setup_plot("오픈 연도별 매장 관리코드 분포 산점도", "오픈 연도", "관리코드 (식별 번호)", figsize=(12, 6))
+sns.regplot(x='오픈연도', y='관리코드', data=df_code, scatter_kws={'alpha':0.4, 'color':'#8E7A5F'}, line_kws={'color':'red'})
+plt.tight_layout()
+plt.savefig(os.path.join(IMAGE_DIR, "13_yearly_code_scatter.png"), dpi=150)
+plt.close()
+print("\n--- [표 13] 오픈연도 및 관리코드 상관계수 ---")
+print(df_code[['오픈연도', '관리코드']].corr().to_markdown())
+
 print("\nEDA 및 이미지 생성이 완료되었습니다.")
+
