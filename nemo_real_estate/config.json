@@ -1,0 +1,20 @@
+{
+  "project_name": "nemo_real_estate",
+  "target_url": "https://www.nemoapp.kr/store",
+  "api_url": "https://www.nemoapp.kr/api/store/search-list",
+  "retry_config": {
+    "max_retries": 5,
+    "backoff_factor": 1.5
+  },
+  "column_mapping": {
+    "name": "매물 제목",
+    "category": "지역구분",
+    "value_1": "보증금 (만원)",
+    "value_2": "월세 (만원)",
+    "detail_text": "상세 속성"
+  },
+  "hooks": {
+    "post_scrape": ".venv/bin/python nemo_real_estate/src/validate.py",
+    "post_eda": ".venv/bin/python nemo_real_estate/src/dashboard_data_builder.py && .venv/bin/python nemo_real_estate/src/post_report.py"
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "검증_일시": "2026-06-12 15:24:52",
+  "csv": {
+    "건수": 663,
+    "컬럼수": 44,
+    "컬럼목록": [
+      "순위",
+      "isPriority",
+      "articleType",
+      "id",
+      "buildingManagementSerialNumber",
+      "agentId",
+      "number",
+      "previewPhotoUrl",
+      "smallPhotoUrls",
+      "originPhotoUrls",
+      "businessLargeCode",
+      "businessLargeCodeName",
+      "businessMiddleCode",
+      "businessMiddleCodeName",
+      "priceType",
+      "priceTypeName",
+      "deposit",
+      "monthlyRent",
+      "isPremiumClosed",
+      "premium",
+      "sale",
+      "maintenanceFee",
+      "floor",
+      "groundFloor",
+      "size",
+      "title",
+      "firstDeposit",
+      "firstMonthlyRent",
+      "firstPremium",
+      "confirmedDateUtc",
+      "nearSubwayStation",
+      "viewCount",
+      "favoriteCount",
+      "isInYourFavorited",
+      "isMoveInDate",
+      "moveInDate",
+      "completionConfirmedDateUtc",
+      "createdDateUtc",
+      "editedDateUtc",
+      "state",
+      "areaPrice",
+      "region",
+      "monthly_rent",
+      "details"
+    ],
+    "결측값": {
+      "isPriority": 663,
+      "agentId": 663,
+      "confirmedDateUtc": 453,
+      "isInYourFavorited": 663,
+      "moveInDate": 646,
+      "completionConfirmedDateUtc": 660
+    },
+    "중복행": 0,
+    "상태": "정상"
+  },
+  "docx": {
+    "단락수": 73,
+    "표수": 12,
+    "이미지수": 7,
+    "문제점": [],
+    "상태": "정상"
+  },
+  "pptx": {
+    "슬라이드수": 11,
+    "전체이미지수": 6,
+    "슬라이드별상세": [
+      {
+        "슬라이드": 1,
+        "텍스트수": 5,
+        "이미지수": 0
+      },
+      {
+        "슬라이드": 2,
+        "텍스트수": 6,
+        "이미지수": 0
+      },
+      {
+        "슬라이드": 3,
+        "텍스트수": 17,
+        "이미지수": 0
+      },
+      {
+        "슬라이드": 4,
+        "텍스트수": 4,
+        "이미지수": 1
+      },
+      {
+        "슬라이드": 5,
+        "텍스트수": 4,
+        "이미지수": 1
+      },
+      {
+        "슬라이드": 6,
+        "텍스트수": 4,
+        "이미지수": 1
+      },
+      {
+        "슬라이드": 7,
+        "텍스트수": 4,
+        "이미지수": 1
+      },
+      {
+        "슬라이드": 8,
+        "텍스트수": 4,
+        "이미지수": 1
+      },
+      {
+        "슬라이드": 9,
+        "텍스트수": 4,
+        "이미지수": 1
+      },
+      {
+        "슬라이드": 10,
+        "텍스트수": 4,
+        "이미지수": 0
+      },
+      {
+        "슬라이드": 11,
+        "텍스트수": 1,
+        "이미지수": 0
+      }
+    ],
+    "문제점": [],
+    "상태": "정상"
+  },
+  "dashboard": {
+    "HTML_크기KB": 56.2,
+    "JS_크기KB": 2003.2,
+    "검증항목": {
+      "외부_JS_참조": true,
+      "DASHBOARD_LISTINGS_참조": true,
+      "window_DASHBOARD_LISTINGS": true,
+      "ChartJS": true,
+      "ECharts": true,
+      "필터_기능": true,
+      "역_필터": true,
+      "거래유형_필터": false,
+      "금액_포맷_함수": true,
+      "다크_라이트_테마": true
+    },
+    "문제점": [],
+    "상태": "정상"
+  }
+}
