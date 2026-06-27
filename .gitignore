@@ -60,3 +60,8 @@ yes24/docs/v2_slides_png/
 !.agents/skills/data-pipeline-framework/
 !.agents/skills/data-pipeline-framework/**
 
+# iherb 데이터 제외
+iherb/data/
+iherb/src/test_one_page_result.json
+iherb/data/*.sqlite
+iherb/data/*.json
